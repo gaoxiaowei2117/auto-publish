@@ -58,7 +58,7 @@ def test_good_draft_has_no_violations() -> None:
 
 
 def test_title_too_long() -> None:
-    d = {**GOOD, "title": "这个标题非常非常非常非常非常非常非常的长"}
+    d = {**GOOD, "title": "标题" * 13}   # 26 chars, well over the 20 platform limit
     v = validate_mod.validate_draft(d, _persona(), AVAILABLE)
     assert any("title" in s and "20" in s for s in v)
 

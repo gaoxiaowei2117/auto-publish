@@ -24,7 +24,7 @@ def validate_draft(draft: dict, persona: Persona, available_images: list[str]) -
 
     # Title length
     t_min, t_max_pers = persona.length.title_chars
-    if len(title) >= PLATFORM_TITLE_MAX:
+    if len(title) > PLATFORM_TITLE_MAX:
         violations.append(
             f"title exceeds platform hard limit 20 chars (got {len(title)})"
         )
