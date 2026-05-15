@@ -31,9 +31,17 @@ def main() -> None:
                    help="Fill the form but don't submit.")
     p.add_argument("--topic", default="",
                    help="Original topic, for audit log only.")
+    p.add_argument("--history-file", default=None,
+                   help="JSON file with the regen history (from generate.py 'history' field). "
+                        "Included in audit log.")
     args = p.parse_args()
 
     draft = json.loads(Path(args.draft_file).read_text(encoding="utf-8"))
+
+    iterations = None
+    if args.history_file:
+        iterations = json.loads(Path(args.history_file).read_text(encoding="utf-8"))
+
     result = xhs_adapter.publish_draft(
         draft=draft,
         images_dir=Path(args.images_dir),
@@ -47,6 +55,8 @@ def main() -> None:
         "user_choice": "draft" if args.save_as_draft else "publish",
         "result": result,
     }
+    if iterations is not None:
+        record["iterations"] = iterations
     audit_path = audit_mod.write_audit(record)
     result["audit_log"] = str(audit_path)
 

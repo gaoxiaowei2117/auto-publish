@@ -31,13 +31,14 @@ description: |
 ```bash
 uv run python scripts/cli.py check-login
 ```
-若 exit code = 1，告诉用户"先扫码登录"，引导执行：
+
+若 exit code = 1，stdout JSON 里会包含 `qrcode_path` 字段指向二维码 PNG。告诉用户去看那个文件扫码，然后等待登录完成：
 
 ```bash
-uv run python scripts/cli.py get-qrcode --output /tmp/xhs-qr.png
-# 在终端里告诉用户去看 /tmp/xhs-qr.png 扫码
 uv run python scripts/cli.py wait-login
 ```
+
+成功后回到本步骤复查一次 check-login。
 
 ### 步骤 2：生成草稿
 
@@ -90,6 +91,8 @@ stdout 是一个 JSON：
 
 ### 步骤 4：发布（或存草稿）
 
+在调用 publish_xhs.py 之前，把 generate.py 输出中的 `history` 字段写到 /tmp/history.json，便于审计日志记录所有迭代尝试。
+
 把当前 draft 写到临时 JSON 文件，调：
 
 ```bash
@@ -97,6 +100,7 @@ uv run python skills/publish-flow/scripts/publish_xhs.py \
   --draft-file /tmp/draft.json \
   --images-dir "<图片目录>" \
   --topic "<原 topic>" \
+  --history-file /tmp/history.json \
   [--save-as-draft]
 ```
 
@@ -118,6 +122,7 @@ uv run python skills/publish-flow/scripts/publish_xhs.py \
   --draft-file /tmp/draft.json \
   --images-dir "<图片目录>" \
   --topic "<原 topic>" \
+  --history-file /tmp/history.json \
   --save-as-draft
 ```
 
