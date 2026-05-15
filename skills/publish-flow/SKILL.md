@@ -109,6 +109,20 @@ stdout JSON：
 - 成功：✅ 已发布。审计日志：`<audit_log>`
 - 失败：❌ 发布失败：`<error>`。审计日志：`<audit_log>`
 
+## `--draft` 模式
+
+跳过最终提交。流程同 B 流程，但步骤 4 的 publish_xhs.py 调用加 `--save-as-draft`：
+
+```bash
+uv run python skills/publish-flow/scripts/publish_xhs.py \
+  --draft-file /tmp/draft.json \
+  --images-dir "<图片目录>" \
+  --topic "<原 topic>" \
+  --save-as-draft
+```
+
+底层调 `scripts/cli.py fill-publish`：把标题/正文/话题/图片填到创作中心表单里，但不点"发布"。用户事后在浏览器里手动确认发出（或丢弃）。返回成功时向用户报告"✅ 已填入草稿，请到创作中心检查并手动发布"。
+
 ## `--auto` 模式
 
 跳过步骤 3 用户确认。生成完直接发。
