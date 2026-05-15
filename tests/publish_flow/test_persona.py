@@ -68,3 +68,67 @@ def test_load_default_persona_succeeds() -> None:
     default = ROOT / "skills" / "publish-flow" / "persona" / "default.yaml"
     persona = persona_mod.load_persona(default)
     assert persona.name
+
+
+BASE_YAML = """
+name: test
+voice:
+  tone: "casual"
+length:
+  title_chars: [10, 20]
+  body_chars: [200, 500]
+emoji:
+  usage: light
+hashtags:
+  count: [3, 4]
+  style: mix
+content_rules:
+  format: "短段落"
+"""
+
+
+def test_examples_must_be_list_not_string(tmp_path: Path) -> None:
+    p = tmp_path / "p.yaml"
+    p.write_text(BASE_YAML + '\nexamples: "oops"\n', encoding="utf-8")
+    with pytest.raises(persona_mod.PersonaError) as exc_info:
+        persona_mod.load_persona(p)
+    assert "examples" in str(exc_info.value)
+
+
+def test_example_missing_field_reports_index(tmp_path: Path) -> None:
+    p = tmp_path / "p.yaml"
+    yaml_text = BASE_YAML + """
+examples:
+  - title: "first"
+    body: "first body"
+    tags: ["#a"]
+  - title: "second"
+    tags: ["#b"]
+"""
+    p.write_text(yaml_text, encoding="utf-8")
+    with pytest.raises(persona_mod.PersonaError) as exc_info:
+        persona_mod.load_persona(p)
+    assert "examples[1]" in str(exc_info.value)
+
+
+def test_pair_with_non_numeric_raises_persona_error(tmp_path: Path) -> None:
+    p = tmp_path / "p.yaml"
+    yaml_text = """
+name: test
+voice:
+  tone: "casual"
+length:
+  title_chars: [foo, 20]
+  body_chars: [200, 500]
+emoji:
+  usage: light
+hashtags:
+  count: [3, 4]
+  style: mix
+content_rules:
+  format: "短段落"
+"""
+    p.write_text(yaml_text, encoding="utf-8")
+    with pytest.raises(persona_mod.PersonaError) as exc_info:
+        persona_mod.load_persona(p)
+    assert "length.title_chars" in str(exc_info.value)

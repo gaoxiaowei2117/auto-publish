@@ -81,7 +81,10 @@ def _require(d: dict, key: str, where: str) -> object:
 def _pair(v, where: str) -> tuple[int, int]:
     if not isinstance(v, list) or len(v) != 2:
         raise PersonaError(f"expected [min, max] in {where}, got {v!r}")
-    return (int(v[0]), int(v[1]))
+    try:
+        return (int(v[0]), int(v[1]))
+    except (TypeError, ValueError) as exc:
+        raise PersonaError(f"expected [int, int] in {where}, got {v!r}") from exc
 
 
 def load_persona(path: Path) -> Persona:
@@ -96,15 +99,22 @@ def load_persona(path: Path) -> Persona:
     hashtags_d = _require(raw, "hashtags", path.name)
     rules_d = _require(raw, "content_rules", path.name)
 
-    examples = [
-        Example(
-            title=str(_require(e, "title", "example")),
-            body=str(_require(e, "body", "example")),
-            tags=list(_require(e, "tags", "example")),
-            note=str(e.get("note", "")),
+    raw_examples = raw.get("examples", []) or []
+    if not isinstance(raw_examples, list):
+        raise PersonaError(f"'examples' must be a list, got {type(raw_examples).__name__}")
+    examples = []
+    for i, e in enumerate(raw_examples):
+        where = f"examples[{i}]"
+        if not isinstance(e, dict):
+            raise PersonaError(f"{where} must be a mapping, got {type(e).__name__}")
+        examples.append(
+            Example(
+                title=str(_require(e, "title", where)),
+                body=str(_require(e, "body", where)),
+                tags=list(_require(e, "tags", where)),
+                note=str(e.get("note", "")),
+            )
         )
-        for e in raw.get("examples", []) or []
-    ]
 
     return Persona(
         name=str(_require(raw, "name", path.name)),
