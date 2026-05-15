@@ -10,7 +10,6 @@ from __future__ import annotations
 
 from persona import Persona
 
-
 PLATFORM_HARD_LIMITS = """\
 HARD PLATFORM LIMITS (must not be exceeded):
 - title: ≤ 20 chars
@@ -69,12 +68,15 @@ def _build_system(p: Persona) -> str:
         f"  count: {p.hashtags.count[0]}-{p.hashtags.count[1]}"
     )
     lines.append(f"  style: {p.hashtags.style}")
-    lines.append(f"  preferred_categories: {', '.join(p.hashtags.preferred_categories) or '(none)'}")
-    lines.append(f"  avoid_categories: {', '.join(p.hashtags.avoid_categories) or '(none)'}")
+    preferred_cats = ", ".join(p.hashtags.preferred_categories) or "(none)"
+    avoid_cats = ", ".join(p.hashtags.avoid_categories) or "(none)"
+    lines.append(f"  preferred_categories: {preferred_cats}")
+    lines.append(f"  avoid_categories: {avoid_cats}")
     lines.append("")
     lines.append("CONTENT RULES:")
+    forbid = ", ".join(p.content_rules.forbid_phrases) or "(none)"
     lines.append(
-        f"  forbid_phrases (MUST NOT appear): {', '.join(p.content_rules.forbid_phrases) or '(none)'}"
+        f"  forbid_phrases (MUST NOT appear): {forbid}"
     )
     lines.append(f"  prefer_first_person: {p.content_rules.prefer_first_person}")
     lines.append(f"  cta_style: {p.content_rules.cta_style}")

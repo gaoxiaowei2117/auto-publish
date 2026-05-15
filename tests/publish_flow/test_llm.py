@@ -1,5 +1,5 @@
-from pathlib import Path
 import sys
+from pathlib import Path
 from unittest.mock import MagicMock
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -34,8 +34,12 @@ def test_call_claude_parses_clean_json() -> None:
 
 
 def test_call_claude_strips_code_fence() -> None:
+    payload = (
+        '{"title": "T", "body": "B", "tags": [], '
+        '"cover_pick": "x", "image_order": []}'
+    )
     client = _make_mock_client(
-        'Sure! Here is the draft:\n```json\n{"title": "T", "body": "B", "tags": [], "cover_pick": "x", "image_order": []}\n```'
+        f"Sure! Here is the draft:\n```json\n{payload}\n```"
     )
     out = llm_mod.call_claude(system="s", user="u", client=client)
     assert out["title"] == "T"
@@ -49,7 +53,11 @@ def test_call_claude_raises_on_unparseable() -> None:
 
 
 def test_call_claude_uses_cache_control_on_system() -> None:
-    client = _make_mock_client('{"title": "T", "body": "B", "tags": [], "cover_pick": "x", "image_order": []}')
+    payload = (
+        '{"title": "T", "body": "B", "tags": [], '
+        '"cover_pick": "x", "image_order": []}'
+    )
+    client = _make_mock_client(payload)
     llm_mod.call_claude(system="long-system-prompt", user="u", client=client)
     args = client.messages.create.call_args.kwargs
     # System should be a structured list with cache_control on the persona block

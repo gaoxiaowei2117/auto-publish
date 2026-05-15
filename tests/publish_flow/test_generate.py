@@ -1,12 +1,12 @@
-from pathlib import Path
 import sys
+from pathlib import Path
 from unittest.mock import MagicMock
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "skills" / "publish-flow" / "scripts"))
 
-import persona as persona_mod
 import generate as gen_mod
+import persona as persona_mod
 
 
 def _persona() -> persona_mod.Persona:

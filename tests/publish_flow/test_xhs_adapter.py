@@ -1,13 +1,12 @@
 import json
 import sys
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "skills" / "publish-flow"))
 
 from platforms import xhs as xhs_mod
-
 
 DRAFT = {
     "title": "今天去逛了城市市集",

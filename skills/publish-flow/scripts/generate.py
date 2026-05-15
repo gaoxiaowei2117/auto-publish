@@ -12,9 +12,9 @@ The returned draft is whichever attempt was last; check
 """
 from __future__ import annotations
 
+from llm import call_claude
 from persona import Persona
 from prompt import build_messages
-from llm import call_claude
 from validate import validate_draft
 
 
@@ -68,6 +68,7 @@ def main() -> None:
     import json
     import sys
     from pathlib import Path
+
     from persona import load_persona
 
     parser = argparse.ArgumentParser(

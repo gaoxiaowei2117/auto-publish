@@ -1,14 +1,13 @@
 """Tests for persona loading."""
+import sys
 from pathlib import Path
 
 import pytest
 
-import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "skills" / "publish-flow" / "scripts"))
 
 import persona as persona_mod
-
 
 SAMPLE_YAML = """
 name: test

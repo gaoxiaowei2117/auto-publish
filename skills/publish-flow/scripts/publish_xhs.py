@@ -16,11 +16,11 @@ from pathlib import Path
 # Make platforms/ importable.
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))   # skills/publish-flow/
-from platforms import xhs as xhs_adapter   # noqa: E402
+from platforms import xhs as xhs_adapter
 
 # Also make audit.py available.
 sys.path.insert(0, str(HERE))
-import audit as audit_mod   # noqa: E402
+import audit as audit_mod
 
 
 def main() -> None:
